@@ -207,6 +207,22 @@ TARGETS: $(TARGETS)
 .DEFAULT_GOAL := TARGETS
 
 .PHONY: qemu qemu-nox debug debug-nox
+
+lab1-ex2-1-mon: $(UCOREIMG)
+	$(V)$(TERMINAL) -e "$(QEMU) -S -s -d in_asm -D $(BINDIR)/q.log -monitor stdio -hda $< -serial null"
+	$(V)sleep 2
+	$(V)$(TERMINAL) -e "gdb -q -x tools/lab1-ex2-1-init"
+
+lab1-ex2-2-mon: $(UCOREIMG)
+	$(V)$(TERMINAL) -e "$(QEMU) -S -s -d in_asm -D $(BINDIR)/q.log -monitor stdio -hda $< -serial null"
+	$(V)sleep 2
+	$(V)$(TERMINAL) -e "gdb -q -x tools/lab1-ex2-2-init"
+
+lab1-ex2-4-mon: $(UCOREIMG)
+	$(V)$(TERMINAL) -e "$(QEMU) -S -s -d in_asm -D $(BINDIR)/q.log -monitor stdio -hda $< -serial null"
+	$(V)sleep 2
+	$(V)$(TERMINAL) -e "gdb -q -x tools/lab1-ex2-4-init"
+
 qemu-mon: $(UCOREIMG)
 	$(V)$(QEMU)  -no-reboot -monitor stdio -hda $< -serial null
 qemu: $(UCOREIMG)
