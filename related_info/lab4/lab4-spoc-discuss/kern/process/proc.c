@@ -162,6 +162,7 @@ proc_run(struct proc_struct *proc) {
         bool intr_flag;
         struct proc_struct *prev = current, *next = proc;
         local_intr_save(intr_flag);
+        cprintf("thread %d switch to thread %d\n", prev->pid, next->pid);
         {
             current = proc;
             load_esp0(next->kstack + KSTACKSIZE);
@@ -274,6 +275,7 @@ do_fork(uint32_t clone_flags, uintptr_t stack, struct trapframe *tf) {
 
     //    1. call alloc_proc to allocate a proc_struct
     proc = alloc_proc();
+    cprintf("thread %d init\n", proc->pid);
     proc->pid = get_pid();
     //    2. call setup_kstack to allocate a kernel stack for child process
     setup_kstack(proc);
@@ -283,6 +285,7 @@ do_fork(uint32_t clone_flags, uintptr_t stack, struct trapframe *tf) {
     list_add_before(&proc_list, &proc->list_link);
     //    5. call wakup_proc to make the new child process RUNNABLE
     wakeup_proc(proc);
+    cprintf("thread %d wake up\n", proc->pid);
     //    7. set ret vaule using child proc's pid
     nr_process++;
     ret = proc->pid;
@@ -321,12 +324,14 @@ repeat:
 		if (proc != NULL) {
 			 haskid = 1;
 		    if (proc->state == PROC_ZOMBIE) {
+		    	 cprintf("thread %d is zombie\n", proc->pid);
 			     goto found;
 		   }
 		}
 	}
     if (haskid) {
 		cprintf("do_wait: has kid begin\n");
+		cprintf("thread %d sleep\n", current->pid);
         current->state = PROC_SLEEPING;
         current->wait_state = WT_CHILD;
         schedule();
@@ -345,6 +350,7 @@ found:
         remove_links(proc);
     }
     local_intr_restore(intr_flag);
+    cprintf("thread %d down\n", proc->pid);
     put_kstack(proc);
     kfree(proc);
     return 0;
@@ -361,6 +367,7 @@ do_exit(int error_code) {
 	cprintf(" do_exit: proc pid %d will exit\n", current->pid);
 	cprintf(" do_exit: proc  parent %x\n", current->parent);
     current->state = PROC_ZOMBIE;
+    cprintf("thread %d zombie\n", current->pid);
 	bool intr_flag;
     struct proc_struct *proc;
     local_intr_save(intr_flag);
