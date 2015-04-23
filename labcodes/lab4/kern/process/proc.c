@@ -283,7 +283,7 @@ do_fork(uint32_t clone_flags, uintptr_t stack, struct trapframe *tf) {
         goto fork_out;
     }
     ret = -E_NO_MEM;
-    //LAB4:EXERCISE2 YOUR CODE
+    //LAB4:EXERCISE2 2012011314
     /*
      * Some Useful MACROs, Functions and DEFINEs, you can use them in below implementation.
      * MACROs or Functions:
@@ -308,6 +308,25 @@ do_fork(uint32_t clone_flags, uintptr_t stack, struct trapframe *tf) {
     //    5. insert proc_struct into hash_list && proc_list
     //    6. call wakup_proc to make the new child process RUNNABLE
     //    7. set ret vaule using child proc's pid
+
+    if ((proc = alloc_proc()) == NULL) {
+    	goto fork_out;
+    }
+    if (setup_kstack(proc)) {
+    	goto bad_fork_cleanup_proc;
+    }
+    if (copy_mm(clone_flags, proc)) {
+    	goto bad_fork_cleanup_kstack;
+    }
+    proc->pid = get_pid();
+    proc->parent = current;
+    nr_process++;
+    copy_thread(proc, stack, tf);
+    hash_proc(proc);
+    list_add(&proc_list, &(proc->list_link));
+    wakeup_proc(proc);
+    ret = proc->pid;
+
 fork_out:
     return ret;
 

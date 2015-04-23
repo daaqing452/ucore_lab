@@ -8,8 +8,8 @@
 
 ### 练习1
 ---
-1.	<b>分配并初始化一个进程控制块。</b>
-	> * 根据提示初始化该初始化的内容
+1.	<b>alloc_proc函数（位于kern/process/proc.c中）负责分配并返回一个新的struct proc_struct结构，用于存储新建立的内核线程的管理信息。ucore需要对这个结构进行最基本的初始化，你需要完成这个初始化过程。</b>
+	> * 根据提示中需要初始化的内容进行初始化
 	> * below fields in proc_struct need to be initialized<br/>
 			enum proc_state state;                      // Process state<br/>
 			int pid;                                    // Process ID<br/>
@@ -40,7 +40,72 @@
 
 ### 练习2
 ---
-1.	<b>完成vmm.c中的do_pgfault函数。</b>
+1.	<b>你需要完成在kern/process/proc.c中的do_fork函数中的处理过程。</b>
+	> * 根据提示中需要初始化的内容进行初始化
+	> * 1. call alloc_proc to allocate a proc_struct<br/>
+	如果没有成功alloc_proc成功，则如同上面代码return的一样，跳到fork_out
+	```
+	if ((proc = alloc_proc()) == NULL) {
+    	goto fork_out;
+    }
+	```
+	> * 2. call setup_kstack to allocate a kernel stack for child process<br/>
+	如果没有成功，就要将之前alloc_proc的资源释放，这时就需要跳到bad_fork_cleanup_proc
+	```
+	if (setup_kstack(proc)) {
+    	goto bad_fork_cleanup_proc;
+    }
+	```
+	> * 3. call copy_mm to dup OR share mm according clone_flag<br/>
+	如果没有成功，就要将之前alloc_proc的资源释放，并且将栈资源也释放，这时就需要跳到bad_fork_cleanup_kstack
+	```
+	if (copy_mm(clone_flags, proc)) {
+    	goto bad_fork_cleanup_kstack;
+    }
+	```
+	> * 4. call copy_thread to setup tf & context in proc_struct<br/>
+	5. insert proc_struct into hash_list && proc_list<br/>
+    6. call wakup_proc to make the new child process RUNNABLE
+	```
+	copy_thread(proc, stack, tf);
+    hash_proc(proc);
+    list_add(&proc_list, &(proc->list_link));
+    wakeup_proc(proc);
+	```
+	> * 7. set ret vaule using child proc's pid
+	```
+	ret = proc->pid;
+	```
+	不过这时可以发现，proc的pid并没有被赋值，因此之前要进行一些初始化，包括对其pid、父进程、nr_process等的处理
+	```
+	proc->pid = get_pid();
+    proc->parent = current;
+    nr_process++;
+	```
+	这段代码插入的位置可以通过不断调试位置make qemu查看是否正确
+	> * 最终代码
+	```
+	if ((proc = alloc_proc()) == NULL) {
+    	goto fork_out;
+    }
+    if (setup_kstack(proc)) {
+    	goto bad_fork_cleanup_proc;
+    }
+    if (copy_mm(clone_flags, proc)) {
+    	goto bad_fork_cleanup_kstack;
+    }
+    proc->pid = get_pid();
+    proc->parent = current;
+    nr_process++;
+    copy_thread(proc, stack, tf);
+    hash_proc(proc);
+    list_add(&proc_list, &(proc->list_link));
+    wakeup_proc(proc);
+    ret = proc->pid;
+	```
+
+2.	<b>请说明ucore是否做到给每个新fork的线程一个唯一的id？请说明你的分析和理由。</b>
+	> *
 
 ### 与标准答案的差异
 ---
