@@ -10,10 +10,10 @@
 ---
 1.	<b>分配并初始化一个进程控制块。</b>
 	> * 根据提示初始化该初始化的内容
-	> below fields in proc_struct need to be initialized<br/>
-		enum proc_state state;                      // Process state<br/>
-     *       int pid;                                    // Process ID<br/>
-     *       int runs;                                   // the running times of Proces<br/>
+	> * below fields in proc_struct need to be initialized<br/>
+			enum proc_state state;                      // Process state<br/>
+			int pid;                                    // Process ID<br/>
+			int runs;                                   // the running times of Proces<br/>
      *       uintptr_t kstack;                           // Process kernel stack<br/>
      *       volatile bool need_resched;                 // bool value: need to be rescheduled to release CPU?<br/>
      *       struct proc_struct *parent;                 // the parent process<br/>
