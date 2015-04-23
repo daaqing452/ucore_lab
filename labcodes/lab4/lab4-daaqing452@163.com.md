@@ -14,17 +14,26 @@
 			enum proc_state state;                      // Process state<br/>
 			int pid;                                    // Process ID<br/>
 			int runs;                                   // the running times of Proces<br/>
-     *       uintptr_t kstack;                           // Process kernel stack<br/>
-     *       volatile bool need_resched;                 // bool value: need to be rescheduled to release CPU?<br/>
-     *       struct proc_struct *parent;                 // the parent process<br/>
-     *       struct mm_struct *mm;                       // Process's memory management field<br/>
-     *       struct context context;                     // Switch here to run process<br/>
-     *       struct trapframe *tf;                       // Trap frame for current interrupt<br/>
-     *       uintptr_t cr3;                              // CR3 register: the base addr of Page Directroy Table(PDT)<br/>
-     *       uint32_t flags;                             // Process flag<br/>
-     *       char name[PROC_NAME_LEN + 1];               // Process name<br/>
+			uintptr_t kstack;                           // Process kernel stack<br/>
+			volatile bool need_resched;                 // bool value: need to be rescheduled to release CPU?<br/>
+			struct context context;                     // Switch here to run process<br/>
+			struct trapframe *tf;                       // Trap frame for current interrupt<br/>
+			uintptr_t cr3;                              // CR3 register: the base addr of Page Directroy Table(PDT)<br/>
+			uint32_t flags;                             // Process flag<br/>
+			char name[PROC_NAME_LEN + 1];               // Process name<br/>
 	```
-	
+	proc->state = PROC_UNINIT;
+	proc->pid = -1;
+	proc->runs = 0;
+	proc->kstack = 0;
+	proc->need_resched = 0;
+	proc->parent = NULL;
+	proc->mm = NULL;
+	memset(&(proc->context), 0, sizeof(struct context));
+	proc->tf = NULL;
+	proc->cr3 = boot_cr3;
+	proc->flags = 0;
+	memset(proc->name, 0, sizeof(proc->name));
 	```
 
 
