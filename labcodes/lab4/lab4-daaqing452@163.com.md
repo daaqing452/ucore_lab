@@ -42,37 +42,37 @@
 ---
 1.	<b>你需要完成在kern/process/proc.c中的do_fork函数中的处理过程。</b>
 	> * 根据提示中需要初始化的内容进行初始化
-	> * 1. call alloc_proc to allocate a proc_struct<br/>
+	> * (1) call alloc_proc to allocate a proc_struct<br/>
 	如果没有成功alloc_proc成功，则如同上面代码return的一样，跳到fork_out
 	```
 	if ((proc = alloc_proc()) == NULL) {
     	goto fork_out;
     }
 	```
-	> * 2. call setup_kstack to allocate a kernel stack for child process<br/>
+	> * (2) call setup_kstack to allocate a kernel stack for child process<br/>
 	如果没有成功，就要将之前alloc_proc的资源释放，这时就需要跳到bad_fork_cleanup_proc
 	```
 	if (setup_kstack(proc)) {
     	goto bad_fork_cleanup_proc;
     }
 	```
-	> * 3. call copy_mm to dup OR share mm according clone_flag<br/>
+	> * (3) call copy_mm to dup OR share mm according clone_flag<br/>
 	如果没有成功，就要将之前alloc_proc的资源释放，并且将栈资源也释放，这时就需要跳到bad_fork_cleanup_kstack
 	```
 	if (copy_mm(clone_flags, proc)) {
     	goto bad_fork_cleanup_kstack;
     }
 	```
-	> * 4. call copy_thread to setup tf & context in proc_struct<br/>
-	> 5. insert proc_struct into hash_list && proc_list<br/>
-    > 6. call wakup_proc to make the new child process RUNNABLE<br/>
+	> * (4) call copy_thread to setup tf & context in proc_struct<br/>
+	(5) insert proc_struct into hash_list && proc_list<br/>
+    (6) call wakup_proc to make the new child process RUNNABLE<br/>
 	```
 	copy_thread(proc, stack, tf);
     hash_proc(proc);
     list_add(&proc_list, &(proc->list_link));
     wakeup_proc(proc);
 	```
-	> * 7. set ret vaule using child proc's pid
+	> * (7) set ret vaule using child proc's pid
 	```
 	ret = proc->pid;
 	```
