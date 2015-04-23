@@ -21,6 +21,7 @@
 			uintptr_t cr3;                              // CR3 register: the base addr of Page Directroy Table(PDT)<br/>
 			uint32_t flags;                             // Process flag<br/>
 			char name[PROC_NAME_LEN + 1];               // Process name<br/>
+	
 	```
 	proc->state = PROC_UNINIT;
 	proc->pid = -1;
