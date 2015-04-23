@@ -64,8 +64,8 @@
     }
 	```
 	> * 4. call copy_thread to setup tf & context in proc_struct<br/>
-	5. insert proc_struct into hash_list && proc_list<br/>
-    6. call wakup_proc to make the new child process RUNNABLE
+	> 5. insert proc_struct into hash_list && proc_list<br/>
+    > 6. call wakup_proc to make the new child process RUNNABLE<br/>
 	```
 	copy_thread(proc, stack, tf);
     hash_proc(proc);
