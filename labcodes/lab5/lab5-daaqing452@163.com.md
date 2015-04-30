@@ -74,27 +74,26 @@
 2.	<b>请给出ucore中一个用户态进程的执行状态生命周期图（包执行状态，执行状态之间的变换关系，以及产生变换的事件或函数调用）。</b>
 
 	```
-	UNINIT --- do_fork ---> RUNNABLE <--- schedule ---> RUNNING --- do_exit ---> ZOMBIE<br/>
-	                           |                           |<br/>
-	                  do_wait / wakeup_proc        do_wait / wakeup_proc<br/>
-	                           |                           |<br/>
+	UNINIT --- do_fork ---> RUNNABLE <--- schedule ---> RUNNING --- do_exit ---> ZOMBIE
+	                           |                           |
+	                  do_wait / wakeup_proc        do_wait / wakeup_proc
+	                           |                           |
 	                           +--------- SLEEPING --------+
 	```
 
 ### 与标准答案的差异
 ---
-1.	
-2.	
+1.	这次lab较为严谨，基本没有区别
 
 ### 本实验中重要的知识点
 ---
-1.	
-2.	
-3.	
-4.	
+1.	新进程被执行do_execve
+2.	load_icode中的具体加载用户程序
+3.	trap_frame的设置，以及如何利用trap_frame通过iret跳转到用户态
+4.	用户态下运行用户程序的第一条指令
+5.	内核线程和用户进程之间的关系
 
 ### OS原理中很重要但在实验中没有对应上的知识点
 ---
-1.	
-2.	
-3.	
+1.	trap_frame中设置好用户态的信息后如何跳到用户态
+2.	加载不同用户程序的选择（Makefile中的内容）
