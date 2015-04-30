@@ -38,6 +38,7 @@
 ### 练习2
 ---
 1.	<b>补充copy_range的实现，确保能够正确执行。</b>
+
 	> * 根据提示补全代码
 	> * (1) find src_kvaddr: the kernel virtual address of page<br/>
 	(2) find dst_kvaddr: the kernel virtual address of npage
@@ -53,16 +54,30 @@
 	```
 	ret = page_insert(to, npage, start, perm);
 	```
-	> * 观察发现在trap.c的trap_dispatch中也有一段lab5需要填充的代码，仔细观察发现时处理时钟中断时，需要将当前进程的need_resched属性置位1，这个可能时lab5中最初级的调度算法，即每个时间片调度一次
+	> * 观察发现在trap.c的trap_dispatch中也有一段lab5需要填充的代码，仔细观察发现是处理时钟中断时，需要将当前进程的need_resched属性置位1，这个可能时lab5中最初级的调度算法，即每个时间片调度一次
 
-2.	<b></b>
+2.	<b>简要说明如何设计实现”Copy on Write 机制“。</b>
+
+	> * 一开始拷贝时，将所有页表的页标记为只读。子进程和父进程公用同一个页表映射。
+	> * 子进程或父进程需要对某一页进行写操作的时候，且该页为只读，则将子进程的该页的映射修改，两边的页表都变成可读可写
+	> * 当对某一页进行写操作，该页为可读可写，则直接写
 
 ### 练习3
 ---
-1.	<b></b>
+1.	<b>分析fork/exec/wait/exit在实现中是如何影响进程的执行状态的。</b>
 	
+	> * do_fork中，新进程被创建并被设置状态为RUNNABLE
+	> * do_execve中，新进程调用了load_icode实现了加载用户程序，新进程等待调度
+	> * do_wait中，进程的状态被设置为SLEEPING，并等待其子进程的执行完毕
+	> * do_exit中，进程释放资源并被设为ZOMBIE状态，等待回收
 	
-2.	<b></b>
+2.	<b>请给出ucore中一个用户态进程的执行状态生命周期图（包执行状态，执行状态之间的变换关系，以及产生变换的事件或函数调用）。</b>
+
+	> UNINIT --- do_fork ---> RUNNABLE <--- schedule ---> RUNNING --- do_exit ---> ZOMBIE<br/>
+	                             |                           |<br/>
+	                   do_wait / wakeup_proc        do_wait / wakeup_proc<br/>
+	                             |                           |<br/>
+	                             +--------- SLEEPING --------+
 
 ### 与标准答案的差异
 ---
