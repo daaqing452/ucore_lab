@@ -73,11 +73,13 @@
 	
 2.	<b>请给出ucore中一个用户态进程的执行状态生命周期图（包执行状态，执行状态之间的变换关系，以及产生变换的事件或函数调用）。</b>
 
-	> UNINIT --- do_fork ---> RUNNABLE <--- schedule ---> RUNNING --- do_exit ---> ZOMBIE<br/>
-	                             |                           |<br/>
-	                   do_wait / wakeup_proc        do_wait / wakeup_proc<br/>
-	                             |                           |<br/>
-	                             +--------- SLEEPING --------+
+	```
+	UNINIT --- do_fork ---> RUNNABLE <--- schedule ---> RUNNING --- do_exit ---> ZOMBIE<br/>
+	                           |                           |<br/>
+	                  do_wait / wakeup_proc        do_wait / wakeup_proc<br/>
+	                           |                           |<br/>
+	                           +--------- SLEEPING --------+
+	```
 
 ### 与标准答案的差异
 ---
