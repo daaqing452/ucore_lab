@@ -38,11 +38,11 @@
 	> * proc_tick：时钟中断的时候调用，可以用来处理进程调度
 	
 	> ucore的调度执行过程
-	> 1. 初始化一个进程队列rq
-	> 2. 将刚开始活动的进程插入队列
-	> 3. 等待时间片结束，利用RR算法选择下一个要调度的进程
-	> 4. 将当前运行进程转换
-	> 5. 若有进程退出，从队列中删除
+	> * 初始化一个进程队列rq
+	> * 将刚开始活动的进程插入队列
+	> * 等待时间片结束，利用RR算法选择下一个要调度的进程
+	> * 将当前运行进程转换
+	> * 若有进程退出，从队列中删除
 
 2.	<b>在实验报告中简要说明如何设计实现”多级反馈队列调度算法“，给出概要设计。</b>
 
@@ -96,7 +96,7 @@
 	(1) remove the proc from rq correctly<br/>
     NOTICE: you can use skew_heap or list. Important functions<br/>
     	skew_heap_remove: remove a entry from skew_heap<br/>
-    	list_del_init: remove a entry from the  list<br/>
+    	list_del_init: remove a entry from the  list
     ```
     rq->lab6_run_pool = skew_heap_remove(rq->lab6_run_pool, &(proc->lab6_run_pool), proc_stride_comp_f);
 	rq->proc_num--;
@@ -105,10 +105,10 @@
 4.	<b>完善stride_pick_next</b>
 
 	> * 根据提示<br/>
-	(1) get a  proc_struct pointer p  with the minimum value of stride
-    	(1.1) If using skew_heap, we can use le2proc get the p from rq->lab6_run_poll
-    	(1.2) If using list, we have to search list to find the p with minimum stride value
-    (2) update p;s stride value: p->lab6_stride
+	(1) get a  proc_struct pointer p  with the minimum value of stride<br/>
+    	(1.1) If using skew_heap, we can use le2proc get the p from rq->lab6_run_poll<br/>
+    	(1.2) If using list, we have to search list to find the p with minimum stride value<br/>
+    (2) update p;s stride value: p->lab6_stride<br/>
     (3) return p
     ```
     if (rq->lab6_run_pool == NULL) return NULL;
@@ -118,24 +118,29 @@
 	return p;
     ```
 
-5.	
+5.	<b>完善stride_proc_tick</b>
 
-
-### 练习3
----
-1.	<b></b>
-	
-	
-2.	<b></b>
+	> 
+	```
+	if (proc->time_slice > 0) {
+    	proc->time_slice --;
+    }
+    if (proc->time_slice == 0) {
+    	proc->need_resched = 1;
+    }
+	```
 
 ### 与标准答案的差异
 ---
-1.	
+1.	在stride算法的实现细节上与标准答案略有不同
 
 ### 本实验中重要的知识点
 ---
-1.	
+1.	stride算法的实现
+2.	新的schedule框架
+3.	新的整个进程调度流程
 
 ### OS原理中很重要但在实验中没有对应上的知识点
 ---
-1.	
+1.	其他调度算法
+2.	新框架的设计和实现
