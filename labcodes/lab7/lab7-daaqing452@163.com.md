@@ -10,6 +10,7 @@
 ---
 1.	<b>trap.c的trap_dispatch函数</b>
 
+	>
 	```
 	ticks++;
 	run_timer_list();
@@ -40,13 +41,10 @@
 		wait_t __wait, *wait = &__wait;
 		wait_current_set(&(sem->wait_queue), wait, wait_state);		//　没有资源则将当前进程变成sleep，加入等待队列
 		local_intr_restore(intr_flag);
-
 		schedule();													// 调度，直到资源获得时被唤醒，直接获得资源
-
 		local_intr_save(intr_flag);
 		wait_current_del(&(sem->wait_queue), wait);					// 从等待队列里删除当前线程
 		local_intr_restore(intr_flag);
-
 		if (wait->wakeup_flags != wait_state) {
 		    return wait->wakeup_flags;
 		}
